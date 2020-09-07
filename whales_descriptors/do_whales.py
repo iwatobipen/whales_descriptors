@@ -18,8 +18,8 @@ import numpy as np
 import pandas as ps
 import rdkit.Chem as Chem
 
-import lcm
-import mol_properties
+from . import lcm
+from . import mol_properties
 
 
 def main(suppl, charge_threshold=0, do_charge=True, property_name=''):
@@ -60,7 +60,7 @@ def main(suppl, charge_threshold=0, do_charge=True, property_name=''):
         # display
         index += 1
         if index % 100 == 0:
-            print 'Mol: ' + str(index)
+            print('Mol: ' + str(index))
 
         # check for correct molecule import, throw an error if import/sanitization fail
         mol, err = import_mol(mol)
@@ -68,7 +68,7 @@ def main(suppl, charge_threshold=0, do_charge=True, property_name=''):
         if err == 1:
             x = np.full((33,), -999.0)
             errors += err
-            print ('Molecule no. ' + str(index) + ' not loaded.')
+            print(('Molecule no. ' + str(index) + ' not loaded.'))
         else:
             # coordinates and partial charges (checks for computed charges)
             coords, w, err = mol_properties.get_coordinates_and_prop(mol, property_name, do_charge)
@@ -78,19 +78,19 @@ def main(suppl, charge_threshold=0, do_charge=True, property_name=''):
             else:
                 x = np.full((33,), -999.0)
                 errors += 1
-                print ('Molecule no. ' + str(index) + ': no computed charges.')
+                print(('Molecule no. ' + str(index) + ': no computed charges.'))
 
         # stores the molecular descriptors
         descriptors[str(index)] = x
 
     # display time
     elapsed = time.time() - t
-    print('Time elapsed ' + str(round(elapsed, 0)) + ' seconds.')
+    print(('Time elapsed ' + str(round(elapsed, 0)) + ' seconds.'))
     descriptors = ps.DataFrame.transpose(descriptors)
 
     # display errors
     if errors > 0:
-        print (str(errors) + ' molecules not loaded/calculated')
+        print((str(errors) + ' molecules not loaded/calculated'))
 
     return descriptors, lab
 
@@ -178,7 +178,7 @@ def extract_lcm(data, start=0, end=100, step=10, lab_string=''):
     """
 
     # Calculates percentiles according to the specified settings
-    perc = range(start, end + 1, step)
+    perc = list(range(start, end + 1, step))
     x = np.percentile(data, list(perc), axis=0)
     x = np.concatenate((x[:, 0], x[:, 1], x[:, 2]), axis=0)  # Flattens preserving the ordering
 
